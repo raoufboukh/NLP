@@ -108,6 +108,17 @@ export const addScanResults = async (req,res) => {
     }
 }
 
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({ role: "user" }).select("-password");
+    if (users) {
+      res.status(200).json(users);
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export const logout = (req, res) => {
     try {
         res.cookie("token", "", {
