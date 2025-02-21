@@ -1,6 +1,12 @@
 import { Hono } from "hono";
 
-import { addScan, bookAppointment, getAllUsers, getScan } from "../controllers/user.controllers.js";
+import {
+  addScan,
+  bookAppointment,
+  getAllUsers,
+  getScan,
+  updateAccountType,
+} from "../controllers/user.controllers.js";
 import { verifyToken } from "../lib/utils.js";
 
 const userRouter = new Hono();
@@ -16,5 +22,8 @@ userRouter.get("/scan-results", verifyToken, getScan);
 
 // Add Scan Results
 userRouter.post("/scan-results", verifyToken, addScan);
+
+// Update Account Type
+userRouter.put("/account-type", verifyToken, updateAccountType);
 
 export default userRouter;

@@ -1,3 +1,4 @@
+/* eslint-disable style/comma-dangle */
 /* eslint-disable antfu/top-level-function */
 import { eq } from "drizzle-orm";
 
@@ -44,4 +45,25 @@ export const addScan = async (c: any) => {
     .returning();
 
   return c.json(updatedUser[0].scanresults);
+};
+
+export const updateAccountType = async (c: any) => {
+  const userId = c.get("user").id;
+  const subscribe = await db
+    .update(users)
+    .set({ accounttype: "premium" })
+    .where(eq(users.id, userId))
+    .returning();
+
+  setTimeout(
+    async () => {
+      await db
+        .update(users)
+        .set({ accounttype: "basic" })
+        .where(eq(users.id, userId));
+    },
+    30 * 24 * 60 * 60 * 1000
+  );
+
+  return c.json(subscribe[0]);
 };
