@@ -4,8 +4,10 @@ import {
   addScan,
   bookAppointment,
   getAllUsers,
+  getNotifications,
   getScan,
   updateAccountType,
+  updateNotificationStatus,
 } from "../controllers/user.controllers.js";
 import { verifyToken } from "../lib/utils.js";
 
@@ -25,5 +27,8 @@ userRouter.post("/scan-results", verifyToken, addScan);
 
 // Update Account Type
 userRouter.put("/account-type", verifyToken, updateAccountType);
+
+userRouter.get("/notifications", verifyToken, getNotifications);
+userRouter.put("/notifications/:id", verifyToken, updateNotificationStatus);
 
 export default userRouter;

@@ -3,7 +3,7 @@
 import { eq } from "drizzle-orm";
 
 import { db } from "../db/db.js";
-import { users } from "../db/schema.js";
+import { notifications, users } from "../db/schema.js";
 
 export const getAllUsers = async (c: any) => {
   const allUsers = await db.select().from(users).where(eq(users.role, "user"));
@@ -19,6 +19,12 @@ export const bookAppointment = async (c: any) => {
     .set({ appointments: { date, description } })
     .where(eq(users.id, userId))
     .returning();
+
+  await db.insert(notifications).values({
+    userid: userId,
+    appointments: user[0].appointments,
+    role: "admin",
+  });
 
   return c.json(user[0].appointments);
 };
@@ -66,4 +72,30 @@ export const updateAccountType = async (c: any) => {
   );
 
   return c.json(subscribe[0]);
+};
+
+export const getNotifications = async (c: any) => {
+  const userRole = c.get("user").role;
+  if (userRole !== "admin") {
+    return c.json({ message: "Unauthorized" }, 403);
+  }
+
+  const notificationsList = await db
+    .select()
+    .from(notifications)
+    .where(eq(notifications.role, "admin"));
+  return c.json(notificationsList);
+};
+
+export const updateNotificationStatus = async (c: any) => {
+  const { id } = c.req.param();
+  const { status } = await c.req.json();
+
+  const updatedNotification = await db
+    .update(notifications)
+    .set({ status })
+    .where(eq(notifications.id, id))
+    .returning();
+
+  return c.json(updatedNotification[0]);
 };

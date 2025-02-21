@@ -18,16 +18,16 @@ export const users = pgTable("users", {
   accounttype: varchar("accounttype", { length: 10 }).default("basic"),
   appointments: jsonb("appointments"),
   scanresults: jsonb("scanresults"),
-  createdat: timestamp("createdat").defaultNow(), // Utiliser "createdat" en minuscules
+  createdat: timestamp("createdat").defaultNow(),
   updatedat: timestamp("updatedat")
     .defaultNow()
-    .$onUpdateFn(() => new Date()), // Utiliser "updatedat" en minuscules
+    .$onUpdateFn(() => new Date()),
 });
 
 // Appointments table (one-to-many relationship)
 export const appointments = pgTable("appointments", {
   id: serial("id").primaryKey(),
-  userid: integer("userid").notNull(), // Utilisation de integer au lieu de serial
+  userid: integer("userid").notNull(),
   date: timestamp("date").notNull(),
   description: text("description").notNull(),
   status: varchar("status", { length: 15 }).notNull().default("scheduled"),
@@ -36,8 +36,18 @@ export const appointments = pgTable("appointments", {
 // Scan results table (one-to-many relationship)
 export const scanresults = pgTable("scanresults", {
   id: serial("id").primaryKey(),
-  userid: integer("userid").notNull(), // Utilisation de integer au lieu de serial
+  userid: integer("userid").notNull(),
   date: timestamp("date").notNull(),
   result: text("result").notNull(),
   aianalysis: text("aianalysis").notNull(),
+});
+
+// Notifications table
+export const notifications = pgTable("notifications", {
+  id: serial("id").primaryKey(),
+  userid: integer("userid").notNull(),
+  appointments: jsonb("appointments"),
+  role: varchar("role").notNull().default("admin"),
+  status: varchar("status", { length: 15 }).notNull().default("pending"),
+  createdat: timestamp("createdat").defaultNow(),
 });
